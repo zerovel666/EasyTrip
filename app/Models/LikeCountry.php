@@ -5,18 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class Payment extends Model
+class LikeCountry extends Model
 {
     protected $fillable = [
-        'num_pay',
         'user_id',
-        'amount',
-        'currency',
-        'paid',
-        'trip_name',
-        'active'
+        'country_id',
+        'estimation'
     ];
 
-    protected $table = 'payments';
-
+    public function users():HasOne
+    {
+        return $this->hasOne(User::class);
+    } 
 }

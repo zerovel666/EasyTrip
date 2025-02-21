@@ -28,7 +28,12 @@ class CountryController extends Controller
     public function all()
     {
         try {
-            return Country::all();
+            $countries = Country::all()->map(function ($country) {
+                $country->descriptionCountry;
+                return $country;
+            });
+            
+            return $countries;
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
@@ -36,10 +41,12 @@ class CountryController extends Controller
         }
     }
 
-    public function show($name_recreation)
+    public function show($trip_name)
     {
         try {
-            return Country::where('name_recreation', $name_recreation)->get();
+            $country = Country::where('trip_name', $trip_name)->first();
+            $country->descriptionCountry;
+            return $country;
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
@@ -47,10 +54,10 @@ class CountryController extends Controller
         }
     }
 
-    public function update(Request $request, $name_recreation)
+    public function update(Request $request, $trip_name)
     {
         try {
-            return Country::where('name_recreation', $name_recreation)->update($request->all());
+            return Country::where('trip_name', $trip_name)->update($request->all());
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()

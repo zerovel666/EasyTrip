@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
-            $table->string('name_country');
-            $table->string('name_recreation');
-            $table->string('name_city');
+            $table->string('country_name');
+            $table->string('trip_name');
+            $table->string('city_name');
             $table->float('price_per_day');
+            $table->integer('count_place');
+            $table->integer('occupied');
             $table->string('image_path');
             $table->string('currency')->default('KZT');
             $table->timestamps();

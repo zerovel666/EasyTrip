@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
-    public function getUrl(Request $request, $name_recreation)
+    public function getUrl(Request $request, $trip_name)
     {
         try {
             $data = $request->all();
@@ -19,7 +19,7 @@ class PaymentController extends Controller
                 throw new \Exception("Bad Request", 400);
             }
 
-            $objectPay = Country::where('name_recreation', $name_recreation)->first();
+            $objectPay = Country::where('trip_name', $trip_name)->first();
 
             if (!$objectPay) {
                 throw new \Exception("Recreation not found", 404);
@@ -32,7 +32,7 @@ class PaymentController extends Controller
                 'num_pay' => $numPay,
                 'user_id' => $userId,
                 'amount' => $objectPay['price_per_day'] * $daysCount,
-                'name_recreation' => $objectPay['name_recreation'],
+                'trip_name' => $objectPay['trip_name'],
             ]);
 
             $paymentUrl = route('payment.paid', ['num_pay' => $numPay]);

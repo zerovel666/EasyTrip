@@ -11,15 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('like_countries', function (Blueprint $table) {
             $table->id();
-            $table->string('num_pay');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('trip_name');
-            $table->float('amount');
-            $table->string('currency')->default('KZT');
-            $table->boolean('paid')->default(false);
-            $table->boolean('active')->default(true);
+            $table->integer('estimation');
+            $table->foreignId('country_id')->constrained('countries')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('like_countries');
     }
 };

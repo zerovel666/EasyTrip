@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\DescriptionCountryController;
+use App\Http\Controllers\LikeCountryController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Http\Request;
@@ -14,14 +16,19 @@ Route::put('/password/reset', [AuthController::class, 'resetPassword'])->name('p
 
 Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(function (){
     Route::post('/country',[CountryController::class,'store']);
-    Route::put('/country/{name_recreation}',[CountryController::class, 'update']);
+    Route::put('/country/{trip_name}',[CountryController::class, 'update']);
+    Route::post('/description/country',[DescriptionCountryController::class,'store']);
+});
+
+Route::middleware(RoleMiddleware::class.':standart')->group(function (){
+    Route::post('/country/like', [LikeCountryController::class,'like']);
 });
 
 Route::get('/country/all',[CountryController::class, 'all']);
-Route::get('/country/{name_recreation}',[CountryController::class, 'show']);
-
+Route::get('/country/{trip_name}',[CountryController::class, 'show']);
 
 Route::prefix('payment')->middleware(RoleMiddleware::class.':standart')->group(function (){
-    Route::post('/getUrl/{name_recreation}',[PaymentController::class,'getUrl']);
+    Route::post('/getUrl/{trip_name}',[PaymentController::class,'getUrl']);
     Route::post('/paid/{num_pay}', [PaymentController::class, 'paid'])->name('payment.paid');
 });
+
