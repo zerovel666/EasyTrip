@@ -11,7 +11,10 @@ class Payment extends Model
         'num_pay',
         'user_id',
         'amount',
-        'currency'
+        'currency',
+        'paid',
+        'name_recreation',
+        'active'
     ];
 
     protected $table = 'payments';

@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->integer('num_pay');
+            $table->string('num_pay');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('name_recreation');
             $table->float('amount');
             $table->string('currency')->default('KZT');
+            $table->boolean('paid')->default(false);
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }
