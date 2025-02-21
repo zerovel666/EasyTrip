@@ -23,4 +23,15 @@ class CountryController extends Controller
             ], $e->getCode());
         }
     }
+
+    public function getAllTrips()
+    {
+        try {
+            return Country::all();
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], $e->getCode());
+        }
+    }
 }

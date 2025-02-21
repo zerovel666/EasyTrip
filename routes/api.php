@@ -14,3 +14,5 @@ Route::put('/password/reset', [AuthController::class, 'resetPassword'])->name('p
 Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(function (){
     Route::post('/country',[CountryController::class,'store']);
 });
+
+Route::get('/country/getAllTrips',[CountryController::class, 'getAllTrips']);
