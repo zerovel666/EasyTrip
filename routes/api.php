@@ -13,6 +13,8 @@ Route::put('/password/reset', [AuthController::class, 'resetPassword'])->name('p
 
 Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(function (){
     Route::post('/country',[CountryController::class,'store']);
+    Route::put('/country/{name_recreation}',[CountryController::class, 'update']);
 });
 
-Route::get('/country/getAllTrips',[CountryController::class, 'getAllTrips']);
+Route::get('/country/all',[CountryController::class, 'all']);
+Route::get('/country/{name_recreation}',[CountryController::class, 'show']);
