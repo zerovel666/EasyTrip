@@ -20,11 +20,11 @@ class LikeCountryController extends Controller
         }
     
         $data['country_id'] = $country->id;
-        unset($data['trip_name']); // Убираем ненужный ключ
+        unset($data['trip_name']); 
     
         LikeCountry::updateOrCreate(
             ["user_id" => $userid, "country_id" => $country->id], 
-            $data // Передаём только обновляемые данные
+            $data
         );
     
         return response()->json(['message' => 'Successfully request'], 200);
