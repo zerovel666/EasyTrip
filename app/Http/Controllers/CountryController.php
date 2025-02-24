@@ -11,12 +11,6 @@ class CountryController extends Controller
 {
     public function store(Request $request)
     {
-        $data = $request->all();
-        $image = $request->file('countryImage');
-        $file = Storage::disk('public')->put('countryImage',$image);
-        $data['image_path'] = $file;
-        unset($data['countryImage']);
-        Country::create($data);
         try {
             $data = $request->all();
             $image = $request->file('countryImage');
@@ -38,6 +32,7 @@ class CountryController extends Controller
     {
         try {
             $countries = Country::all()->map(function ($country) {
+                $country['image_path'] = Storage::url($country['image_path']);
                 $country->descriptionCountry;
                 return $country;
             });

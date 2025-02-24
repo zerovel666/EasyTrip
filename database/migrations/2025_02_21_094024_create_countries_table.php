@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('occupied')->default(0);
             $table->string('image_path');
             $table->string('currency')->default('KZT');
+            $table->boolean('active')->default(false);
             $table->timestamps();
         });
     }
