@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('country_id')->constrained('countries')->onDelete('cascade');
             $table->text('description');
+            $table->text('preview');
             $table->float('rating')->default(3);
             $table->timestamps();
         });
