@@ -13,7 +13,6 @@ class DescriptionCountryFactory extends Factory
         return [
             'country_id' => Country::whereNotIn('id', DescriptionCountry::pluck('country_id'))->inRandomOrder()->value('id'),
             'description' => $this->faker->paragraph(),
-            'rating' => $this->faker->randomFloat(1, 1, 5), 
         ];
     }
 }
