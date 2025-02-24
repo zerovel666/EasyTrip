@@ -24,6 +24,7 @@ Route::middleware(RoleMiddleware::class.':standart')->group(function (){
     Route::post('/country/like', [LikeCountryController::class,'like']);
 });
 
+Route::get('/country/best',[CountryController::class,'getBests']);
 Route::get('/country/all',[CountryController::class, 'all']);
 Route::get('/country/{trip_name}',[CountryController::class, 'show']);
 

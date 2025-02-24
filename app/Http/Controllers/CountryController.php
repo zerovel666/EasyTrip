@@ -3,12 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Country;
+use App\Models\DescriptionCountry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Constraint\Count;
 
 class CountryController extends Controller
 {
+    public function getBests()
+    {
+        try {
+            $countries = Country::with('descriptionCountry')
+                ->whereHas('descriptionCountry', function ($query) {
+                    $query->orderByDesc('rating');
+                })
+                ->limit(6)
+                ->get();
+    
+            return response()->json($countries);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], $e->getCode() ?: 500);
+        }
+    }
+    
+    
     public function store(Request $request)
     {
         try {
