@@ -18,8 +18,13 @@ class CountryController extends Controller
                     $query->orderByDesc('rating');
                 })
                 ->limit(6)
-                ->get();
-    
+                ->get()
+                ->map(function($country){
+                    $country['image_path'] ="http://localhost:8000". Storage::url($country['image_path']);
+                    $country->descriptionCountry;
+                    return $country;
+                });
+        
             return response()->json($countries);
         } catch (\Exception $e) {
             return response()->json([
@@ -52,7 +57,7 @@ class CountryController extends Controller
     {
         try {
             $countries = Country::all()->map(function ($country) {
-                $country['image_path'] = Storage::url($country['image_path']);
+                $country['image_path'] = "http://localhost:8000".Storage::url($country['image_path']);
                 $country->descriptionCountry;
                 return $country;
             });
