@@ -10,10 +10,9 @@ class CountryFactory extends Factory
     public function definition(): array
     {
         $countries = ['Казахстан', 'Россия', 'США', 'Франция', 'Германия', 'Италия', 'Испания', 'Китай', 'Япония', 'Турция'];
-        $cities = ['Алматы', 'Москва', 'Нью-Йорк', 'Париж', 'Берлин', 'Рим', 'Мадрид', 'Пекин', 'Токио', 'Анкара'];
 
         $country = $this->faker->randomElement($countries);
-        $city = $this->faker->randomElement($cities);
+        $city = $this->faker->city();
 
         return [
             'country_name' => $country,
@@ -24,8 +23,8 @@ class CountryFactory extends Factory
             'occupied' => $this->faker->numberBetween(1, 50),
             'image_path' => 'images/' . Str::random(10) . '.jpg',
             'currency' => 'KZT',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'created_at' => $this->faker->date,
+            'updated_at' => $this->faker->date,
         ];
     }
 }
