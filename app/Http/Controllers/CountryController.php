@@ -4,17 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Country;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Constraint\Count;
 
 class CountryController extends Controller
 {
     public function store(Request $request)
     {
+        $data = $request->all();
+        $image = $request->file('countryImage');
+        $file = Storage::disk('public')->put('countryImage',$image);
+        $data['image_path'] = $file;
+        unset($data['countryImage']);
+        Country::create($data);
         try {
             $data = $request->all();
-            foreach ($data['countries'] as $country) {
-                Country::create($country);
-            }
+            $image = $request->file('countryImage');
+            $file = Storage::disk('public')->put('countryImage',$image);
+            $data['image_path'] = $file;
+            unset($data['countryImage']);
+            Country::create($data);
             return response()->json([
                 'message' => 'Succefully request'
             ]);
