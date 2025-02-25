@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
 
         // Country::factory(50)->create();
         // User::factory(50)->create();
-        LikeCountry::factory(300)->create();
-        DescriptionCountry::factory(300)->create();
+        LikeCountry::factory(rand(100,500))->create();
+        DescriptionCountry::factory(rand(100,500))->create();
         Country::all()->each(function ($country) {
             Tags::factory()->count(rand(3, 4))->create([
                 'country_id' => $country->id
