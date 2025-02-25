@@ -31,4 +31,9 @@ class Country extends Model
     {
         return $this->hasMany(Tags::class,'country_id','id');
     }
+
+    public function imageCountries():HasOne
+    {
+        return $this->hasOne(ImageCountry::class,'country_id','id');
+    }
 }

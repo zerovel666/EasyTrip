@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Country;
 use App\Models\DescriptionCountry;
+use App\Models\ImageCountry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Constraint\Count;
@@ -103,13 +104,19 @@ class CountryController extends Controller
     public function countByname(Request $request)
     {
         try {
-            return Country::select('country_name')->distinct()->get()->map(function ($country){
-                $countTrip = Country::where('country_name',$country['country_name'])->count();
+            return Country::select('country_name')->distinct()->get()->map(function ($country) {
+                $countries = Country::where('country_name', $country['country_name']);
+                $countTrip = $countries->count();
+                
+                $countryImage = ImageCountry::whereIn('country_id', $countries->pluck('id'))->first()->image_path;
+                
                 return [
                     "country_name" => $country['country_name'],
-                    "count_trip" => $countTrip
+                    "count_trip" => $countTrip,
+                    "image_path" => "http://localhost:8000" . Storage::url($countryImage)
                 ];
             });
+            
             
         } catch (\Exception $e) {
             return response()->json([
