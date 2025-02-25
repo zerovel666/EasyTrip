@@ -25,6 +25,7 @@ Route::middleware(RoleMiddleware::class.':standart')->group(function (){
 });
 
 Route::get('/country/best',[CountryController::class,'getBests']);
+Route::get('/country/countByname',[CountryController::class,'countByname']);
 Route::get('/country/all',[CountryController::class, 'all']);
 Route::get('/country/{trip_name}',[CountryController::class, 'show']);
 

@@ -25,7 +25,7 @@ class Country extends Model
 
     public function descriptionCountry() :HasOne
     {
-        return $this->hasOne(descriptionCountry::class);
+        return $this->hasOne(descriptionCountry::class,'country_id','id');
     }
     public function tags():HasMany
     {

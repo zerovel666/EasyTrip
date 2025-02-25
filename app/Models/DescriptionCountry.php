@@ -17,8 +17,13 @@ class DescriptionCountry extends Model
         'rating',
     ];
 
+    protected $casts = [
+        'rating' => 'integer',
+    ];
+    
+
     public function country(): BelongsTo
     {
-        return $this->belongsTo(Country::class);
+        return $this->belongsTo(Country::class,'id','country_id');
     }
 }
