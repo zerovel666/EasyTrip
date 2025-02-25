@@ -25,7 +25,7 @@ class CountryController extends Controller
     
             return collect($result)->map(function ($country) {
                 $country->descriptionCountry;
-                $country['image_path'] = "http://localhost:8000" . Storage::url($country['image_path']);
+                $country['image_path'] = "http://localhost:8000" . Storage::url((string)$country['image_path']);
                 return $country;
             });
         } catch (\Exception $e) {
