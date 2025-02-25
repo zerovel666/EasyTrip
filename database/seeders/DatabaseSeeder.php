@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Country;
 use App\Models\DescriptionCountry;
 use App\Models\LikeCountry;
+use App\Models\Tags;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,6 +23,11 @@ class DatabaseSeeder extends Seeder
         // User::factory(50)->create();
         LikeCountry::factory(50)->create();
         DescriptionCountry::factory(50)->create();
+        Country::all()->each(function ($country) {
+            Tags::factory()->count(rand(3, 4))->create([
+                'country_id' => $country->id
+            ]);
+        });
 
     }
 }

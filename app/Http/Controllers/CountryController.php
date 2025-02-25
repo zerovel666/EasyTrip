@@ -22,6 +22,7 @@ class CountryController extends Controller
                 ->map(function($country){
                     $country['image_path'] ="http://localhost:8000". Storage::url($country['image_path']);
                     $country->descriptionCountry;
+                    $country->tags;
                     return $country;
                 });
         
@@ -52,6 +53,8 @@ class CountryController extends Controller
             ], $e->getCode());
         }
     }
+    //    UPDATE countries SET image_path = 'countryImage/5T0ctVNboOwPr11zLUr4LofqOd1xfCdTS4yXCtmz.jpg';
+
 
     public function all()
     {
@@ -59,6 +62,7 @@ class CountryController extends Controller
             $countries = Country::all()->map(function ($country) {
                 $country['image_path'] = "http://localhost:8000".Storage::url($country['image_path']);
                 $country->descriptionCountry;
+                $country->tags;
                 return $country;
             });
             
