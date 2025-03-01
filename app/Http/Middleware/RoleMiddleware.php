@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,8 @@ class RoleMiddleware
      */
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        if ($request->headers->get('role') !== $role) {
+        $userRole = User::find($request->headers->get('userid'))['role'];
+        if ($userRole !== $role) {
             return response()->json(["message" => "Access Denied"], 403);
         }
 

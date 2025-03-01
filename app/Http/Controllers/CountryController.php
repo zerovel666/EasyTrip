@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Country;
 use App\Models\DescriptionCountry;
 use App\Models\ImageCountry;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use PHPUnit\Framework\Constraint\Count;
 
 class CountryController extends Controller
 {
@@ -16,14 +16,14 @@ class CountryController extends Controller
         try {
             $bestRatings = DescriptionCountry::orderByDesc('rating')->limit(6)->get();
             $result = [];
-    
+
             foreach ($bestRatings as $bestRating) {
                 $country = Country::find($bestRating['country_id']);
                 if ($country) {
                     $result[] = $country;
                 }
             }
-    
+
             return collect($result)->map(function ($country) {
                 $country->descriptionCountry;
                 $country['image_path'] = "http://localhost:8000" . Storage::url((string)$country['image_path']);
@@ -35,7 +35,7 @@ class CountryController extends Controller
             ], $e->getCode() ?: 500);
         }
     }
-    
+
 
 
     public function store(Request $request)
@@ -59,17 +59,30 @@ class CountryController extends Controller
     //    UPDATE countries SET image_path = 'countryImage/5T0ctVNboOwPr11zLUr4LofqOd1xfCdTS4yXCtmz.jpg';
 
 
-    public function all()
+    public function all(Request $request)
     {
-        try {
-            $countries = Country::all()->map(function ($country) {
-                $country['image_path'] = "http://localhost:8000" . Storage::url($country['image_path']);
-                $country->descriptionCountry;
-                $country->tags;
-                return $country;
-            });
 
-            return $countries;
+        try {
+            $user = $request->header('userid');
+            $user = User::find($user);
+            if (isset($user['role'])  && $user['role'] == 'admin') {
+                $countries = Country::all()->map(function ($country) {
+                    $country['image_path'] = "http://localhost:8000" . Storage::url($country['image_path']);
+                    $country->descriptionCountry;
+                    $country->tags;
+                    return $country;
+                });
+
+                return $countries;
+            } else {
+                $countries = Country::where('active', true)->get()->map(function ($country) {
+                    $country['image_path'] = "http://localhost:8000" . Storage::url($country['image_path']);
+                    $country->descriptionCountry;
+                    $country->tags;
+                    return $country;
+                });
+                return $countries;
+            }
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
@@ -82,6 +95,8 @@ class CountryController extends Controller
         try {
             $country = Country::where('trip_name', $trip_name)->first();
             $country->descriptionCountry;
+            $country->tags;
+            $country['image_path'] =  "http://localhost:8000" . Storage::url($country['image_path']);
             return $country;
         } catch (\Exception $e) {
             return response()->json([
@@ -107,17 +122,15 @@ class CountryController extends Controller
             return Country::select('country_name')->distinct()->get()->map(function ($country) {
                 $countries = Country::where('country_name', $country['country_name']);
                 $countTrip = $countries->count();
-                
+
                 $countryImage = ImageCountry::whereIn('country_id', $countries->pluck('id'))->first()->image_path;
-                
+
                 return [
                     "country_name" => $country['country_name'],
                     "count_trip" => $countTrip,
                     "image_path" => "http://localhost:8000" . Storage::url($countryImage)
                 ];
             });
-            
-            
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()

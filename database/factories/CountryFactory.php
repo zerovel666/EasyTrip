@@ -24,6 +24,7 @@ class CountryFactory extends Factory
             'image_path' => $this->faker->image,
             'currency' => 'KZT',
             'created_at' => $this->faker->date,
+            'active' => $this->faker->boolean,
             'updated_at' => $this->faker->date,
         ];
     }

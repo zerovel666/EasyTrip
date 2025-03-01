@@ -19,7 +19,7 @@ class LikeCountry extends Model
     public function user(): HasOne
     {
         return $this->hasOne(User::class);
-    } 
+    }
 
     public function country(): BelongsTo
     {

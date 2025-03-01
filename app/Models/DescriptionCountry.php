@@ -12,6 +12,7 @@ class DescriptionCountry extends Model
 
     protected $fillable = [
         'country_id',
+        'title',
         'description',
         'preview',
         'rating',
