@@ -2,70 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
 use App\Models\Country;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
-    public function getUrl(Request $request, $trip_name)
+    public function paid(Request $request)
     {
         try {
-            $data = $request->all();
-            $userId = $request->header('userid');
+            DB::transaction(function () use ($request) {
+                $cardPay = [
+                    'num_pay' => Str::uuid(),
+                    'user_id' => $request->header('userid'),
+                    'phone' => $request->card['phone'],
+                    'email' => $request->card['email'],
+                    'full_name' => $request->card['full_name'],
+                    'type'  => $request->card['type'],
+                    'num_card' => $request->card['num_card'],
+                    'fn_mn_card' => $request->card['fn_mn_card'],
+                    'trip_name' => $request->card['trip_name'],
+                    'amount' => $request->card['amount']
+                ];
+                $country_id = Country::whereTripName($request->card['trip_name'])->get()[0]['id'];
+                $data = [
+                    'country_id'     => $country_id,
+                    'user_id'        => $request->header('userid'),
+                    'check_in'       => $request->data['check_in'],
+                    'check_out'      => $request->data['check_out'],
+                    'active'         => true,
+                    'uuid'           => Str::uuid(),
+                    'users_iins'          => json_encode($request->users_iins),
+                    'occupied_place' => $request->data['occupied_place']
+                ];
 
-            if (!$userId) {
-                throw new \Exception("Bad Request", 400);
-            }
+                Payment::create($cardPay);
+                Booking::create($data); 
+            });
 
-            $objectPay = Country::where('trip_name', $trip_name)->first();
-
-            if (!$objectPay) {
-                throw new \Exception("Recreation not found", 404);
-            }
-
-            $daysCount = $data['days_count'] ?? 1;
-            $numPay = Str::uuid();
-
-           Payment::create([
-                'num_pay' => $numPay,
-                'user_id' => $userId,
-                'amount' => $objectPay['price_per_day'] * $daysCount,
-                'trip_name' => $objectPay['trip_name'],
-            ]);
-
-            $paymentUrl = route('payment.paid', ['num_pay' => $numPay]);
-
-            return response()->json([
-                "message" => "Payment link generated",
-                "payment_url" => $paymentUrl
-            ]);
+            return response()->json(['status' => true, 'message' => 'Successfully request'], 200);
         } catch (\Exception $e) {
-            return response()->json([
-                "message" => $e->getMessage()
-            ], is_int($e->getCode()) && $e->getCode() >= 100 && $e->getCode() < 600 ? $e->getCode() : 400);
+            return response()->json(['status' => false, 'message' => $e->getMessage()], 500);
         }
-    }
-
-    public function paid(Request $request, $num_pay)
-    {
-        $data = $request->all();
-        $payment = Payment::where('num_pay', $num_pay)->where('active',true)->first();
-        $userId = $request->header('userid');
-        if (!$payment) {
-            return response()->json(["message" => "Payment not found"], 404);
-        }
-        if ($payment['user_id'] != $userId){
-            return response()->json(["message" => "You dont access, for paid this transaction"], 400);
-        }
-        if (!isset($data['cvv'],$data['amount'],$data['date'])){
-            return response()->json(["message" => "Bad request"], 400);
-        }
-        if ($data['amount'] <= $payment['amount']){
-            return response()->json(["message" => "Insufficient funds"], 400);
-        }
-        $payment->update(['paid' => true, 'active' => false]);
-        return response()->json(['message' => 'Оплата прошла успешно, ожидайте PDF файл на email отправим в течении 10 минут'],200);
     }
 }

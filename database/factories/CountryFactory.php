@@ -20,7 +20,7 @@ class CountryFactory extends Factory
             'city_name' => $city,
             'price_per_day' => $this->faker->numberBetween(10000,30000),
             'count_place' => $this->faker->numberBetween(1, 50),
-            'occupied' => $this->faker->numberBetween(1, 50),
+            'occupied' => 0,
             'image_path' => $this->faker->image,
             'currency' => 'KZT',
             'created_at' => $this->faker->date,

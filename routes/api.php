@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\DescriptionCountryController;
 use App\Http\Controllers\LikeCountryController;
@@ -30,7 +31,13 @@ Route::get('/country/all',[CountryController::class, 'all']);
 Route::get('/country/{trip_name}',[CountryController::class, 'show']);
 
 Route::prefix('payment')->middleware(RoleMiddleware::class.':standart')->group(function (){
-    Route::post('/getUrl/{trip_name}',[PaymentController::class,'getUrl']);
-    Route::post('/paid/{num_pay}', [PaymentController::class, 'paid'])->name('payment.paid');
+    Route::post('/paid', [PaymentController::class, 'paid']);
 });
+
+Route::prefix('booking')->middleware(RoleMiddleware::class.':standart')->group(function(){
+    Route::post('/{trip_name}',[BookingController::class,'createBooking']);
+    Route::delete('/{trip_name}',[BookingController::class,'cancelBooking']);
+});
+
+Route::get("/booking/{trip_name}",[BookingController::class, 'allByTripName']);
 

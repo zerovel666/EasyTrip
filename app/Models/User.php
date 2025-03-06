@@ -27,4 +27,9 @@ class User extends Authenticatable
     ];
 
     protected $table = 'users';
+
+    public function bookings() :HasMany
+    {
+        return $this->hasMany(Booking::class,'user_id','id');
+    }
 }

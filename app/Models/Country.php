@@ -36,4 +36,9 @@ class Country extends Model
     {
         return $this->hasOne(ImageCountry::class,'country_id','id');
     }
+
+    public function bookings() :HasMany
+    {
+        return $this->hasMany(Booking::class,'country_id','id');
+    }
 }
