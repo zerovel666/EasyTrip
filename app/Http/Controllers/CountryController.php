@@ -7,6 +7,7 @@ use App\Models\DescriptionCountry;
 use App\Models\ImageCountry;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class CountryController extends Controller
@@ -66,7 +67,7 @@ class CountryController extends Controller
             $user = $request->header('userid');
             $user = User::find($user);
             if (isset($user['role'])  && $user['role'] == 'admin') {
-                $countries = Country::all()->map(function ($country) {
+                $countries = Country::orderBy('id','asc')->get()->map(function ($country) {
                     $country['image_path'] = "http://localhost:8000" . Storage::url($country['image_path']);
                     $country->descriptionCountry;
                     $country->tags;
@@ -75,7 +76,7 @@ class CountryController extends Controller
 
                 return $countries;
             } else {
-                $countries = Country::where('active', true)->get()->map(function ($country) {
+                $countries = Country::where('active', true)->orderBy('id','asc')->get()->map(function ($country) {
                     $country['image_path'] = "http://localhost:8000" . Storage::url($country['image_path']);
                     $country->descriptionCountry;
                     $country->tags;
@@ -137,4 +138,33 @@ class CountryController extends Controller
             ], $e->getCode());
         }
     }
+
+    public function getColumn()
+    {
+        return Schema::getColumnListing((new Country)->getTable());
+    }
+
+    public function data()
+    {
+        return Country::orderBy('id','asc')->get();
+    }
+
+    public function deleteById($id)
+    {
+        return response()->json([
+            'status' => Country::where('id', $id)->delete(),
+            'message' => "Success delete"
+        ],200);
+    }
+    public function updateById(Request $request, $id)
+    {
+        $data = $request->all();
+        $image = $request->file('image_path');
+        if($image){
+            $saveFile = Storage::disk('public')->put('countryImage', $image);
+            $data['image_path'] = $saveFile;
+        }
+        return Country::where('id', $id)->update($data);
+    }
 }
+    
