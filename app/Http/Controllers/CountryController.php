@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Country;
 use App\Models\DescriptionCountry;
 use App\Models\ImageCountry;
+use App\Models\Tags;
 use App\Models\User;
+use Illuminate\Container\Attributes\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
@@ -166,5 +169,45 @@ class CountryController extends Controller
         }
         return Country::where('id', $id)->update($data);
     }
+    public function downloadTableColumnOrThisRelation()
+    {
+        return response()->json([
+            'country' => Schema::getColumnListing((new Country)->getTable()),
+            'tags' => Schema::getColumnListing((new Tags)->getTable()),
+            'description_country' => Schema::getColumnListing((new DescriptionCountry)->getTable()),
+            'image_country' => Schema::getColumnListing((new ImageCountry)->getTable()),
+        ]);
+    }
+    
+    public function createAdmin(Request $request)
+    {
+            DB::transaction(function () use ($request) {
+                $dataCountry = $request->country;
+                unset($dataCountry['image_path_name']);
+                $fileCountry = Storage::disk('public')->put('countryImage', $request->file('image_path'));
+                $dataCountry['image_path'] = $fileCountry;
+                $country = Country::create($dataCountry);
+        
+                $dataDescriptionCountry = $request->description_country;
+                $dataDescriptionCountry['country_id'] = $country->id;
+                DescriptionCountry::create($dataDescriptionCountry);
+        
+                $dataTags = $request->tags;
+                $dataTags['country_id'] = $country->id;
+                Tags::create($dataTags);
+        
+                $dataImageCountry = $request->image_country;
+                $dataImageCountry['country_id'] = $country->id;
+                $fileImageCountry = Storage::disk('public')->put('countryImage', $request->file('image_path_country'));
+                $dataImageCountry['image_path'] = $fileImageCountry;
+                unset($dataImageCountry['image_path_name']);
+                \Log::info($dataImageCountry);
+                ImageCountry::create($dataImageCountry);
+            });
+            return response()->json([
+                'message' => 'Success create'
+            ]);
+
+    }    
 }
     

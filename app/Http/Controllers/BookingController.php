@@ -91,4 +91,10 @@ class BookingController extends Controller
             'message' => "Success delete"
         ],200);
     }
+    public function downloadTableColumnOrThisRelation()
+    {
+        return response()->json([
+            'booking' => Schema::getColumnListing((new Booking)->getTable()),
+        ]);
+    }
 }

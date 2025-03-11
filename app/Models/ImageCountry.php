@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ImageCountry extends Model
 {
     use HasFactory;
-    protected $model = [
+    protected $fillable = [
         'country_id',
         'image_path'
     ];

@@ -4,11 +4,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CountryController;
-use App\Http\Controllers\DescriptionCountryController;
 use App\Http\Controllers\LikeCountryController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\RoleMiddleware;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/user/register',[AuthController::class, 'register']);
@@ -42,12 +41,18 @@ Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(functi
         Route::get('/column',[BookingController::class,'getColumn']);
         Route::delete('/{id}',[BookingController::class,'deleteById']);
         Route::post('update/{id}',[BookingController::class, 'updateById']);
+        Route::get('/download',[BookingController::class,'downloadTableColumnOrThisRelation']);
+        Route::post('/create',[BookingController::class,'createAdmin']);
     });
     Route::prefix('country')->group(function (){
         Route::get('/column',[CountryController::class,'getColumn']);
         Route::get('/data',[CountryController::class, 'data']);
         Route::delete('/{id}',[CountryController::class, 'deleteById']);
         Route::post('update/{id}',[CountryController::class, 'updateById']);
+        Route::get('/download',[CountryController::class,'downloadTableColumnOrThisRelation']);
+    });
+    Route::prefix('user')->group(function (){
+        Route::get('/all',[UserController::class, 'all']);
     });
 });
 // Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(function (){
