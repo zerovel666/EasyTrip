@@ -82,8 +82,3 @@ Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(functi
         Route::post('/create',[TagsController::class, 'create']);
     });
 });
-// Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(function (){
-//     Route::post('/country',[CountryController::class,'store']);
-//     Route::put('/country/{trip_name}',[CountryController::class, 'update']);
-//     Route::post('/description/country',[DescriptionCountryController::class,'store']);
-// });
