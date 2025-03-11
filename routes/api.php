@@ -4,8 +4,11 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\DescriptionCountryController;
+use App\Http\Controllers\ImageCountryController;
 use App\Http\Controllers\LikeCountryController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\TagsController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -50,9 +53,33 @@ Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(functi
         Route::delete('/{id}',[CountryController::class, 'deleteById']);
         Route::post('update/{id}',[CountryController::class, 'updateById']);
         Route::get('/download',[CountryController::class,'downloadTableColumnOrThisRelation']);
+        Route::post('/create',[CountryController::class,'createAdmin']);
     });
-    Route::prefix('user')->group(function (){
-        Route::get('/all',[UserController::class, 'all']);
+    Route::prefix('users')->group(function (){
+        Route::get('/column',[UserController::class,'getColumn']);
+        Route::get('/data',[UserController::class, 'data']);
+        Route::delete('/{id}',[UserController::class, 'deleteById']);
+        Route::post('update/{id}',[UserController::class, 'updateById']);
+    });
+    Route::prefix('descriptionCountry')->group(function (){
+        Route::get('/column',[DescriptionCountryController::class,'getColumn']);
+        Route::get('/data',[DescriptionCountryController::class, 'data']);
+        Route::delete('/{id}',[DescriptionCountryController::class, 'deleteById']);
+        Route::post('update/{id}',[DescriptionCountryController::class, 'updateBy']);
+    });
+    Route::prefix('imageCountry')->group(function (){
+        Route::get('/column',[ImageCountryController::class,'getColumn']);
+        Route::get('/data',[ImageCountryController::class, 'data']);
+        Route::delete('/{id}',[ImageCountryController::class, 'deleteById']);
+        Route::post('update/{id}',[ImageCountryController::class, 'updateBy']);
+    });
+    Route::prefix('tags')->group(function (){
+        Route::get('/column',[TagsController::class,'getColumn']);
+        Route::get('/data',[TagsController::class, 'data']);
+        Route::delete('/{id}',[TagsController::class, 'deleteById']);
+        Route::post('update/{id}',[TagsController::class, 'updateBy']);
+        Route::get('/download',[TagsController::class,'downloadTableColumnOrThisRelation']);
+        Route::post('/create',[TagsController::class, 'create']);
     });
 });
 // Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(function (){

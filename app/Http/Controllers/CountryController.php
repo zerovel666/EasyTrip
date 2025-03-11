@@ -201,7 +201,6 @@ class CountryController extends Controller
                 $fileImageCountry = Storage::disk('public')->put('countryImage', $request->file('image_path_country'));
                 $dataImageCountry['image_path'] = $fileImageCountry;
                 unset($dataImageCountry['image_path_name']);
-                \Log::info($dataImageCountry);
                 ImageCountry::create($dataImageCountry);
             });
             return response()->json([

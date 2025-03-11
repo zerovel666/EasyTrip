@@ -44,7 +44,6 @@ class AuthController extends Controller
                     "message" => "Email или ИИН уже заняты"
                 ], 409);
             }
-            \Log::info('error',[$e->getMessage()]);
             return response()->json([
                 "message" => "Database error"
             ], 500);

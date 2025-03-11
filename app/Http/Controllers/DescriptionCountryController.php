@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Country;
 use App\Models\DescriptionCountry;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use PhpParser\Node\Expr\FuncCall;
 
 class DescriptionCountryController extends Controller
 {
@@ -21,5 +23,24 @@ class DescriptionCountryController extends Controller
             DescriptionCountry::updateOrCreate(['country_id' => $description['country_id']],$description);
         }
         return response()->json(['message' => 'Succefully request']);
+    }
+
+    public function getColumn()
+    {
+        return Schema::getColumnListing((new DescriptionCountry())->getTable());
+    }
+    public function data()
+    {
+        return DescriptionCountry::all();
+    }
+    public function deleteById($id)
+    {
+        return DescriptionCountry::destroy($id);
+    }
+    public function updateBy(Request $request, $id)
+    {
+        $description = DescriptionCountry::find($id);
+        $description->update($request->all());
+        return $description;
     }
 }

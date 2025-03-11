@@ -20,10 +20,8 @@ class User extends Authenticatable
         'role'
     ];
 
-    protected $hidden = ['password'];
-
     protected $casts = [
-        'password' => 'hashed', // Laravel 10+ автоматически хеширует пароли
+        'password' => 'hashed', 
     ];
 
     protected $table = 'users';

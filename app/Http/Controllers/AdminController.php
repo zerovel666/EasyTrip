@@ -8,7 +8,7 @@ class AdminController extends Controller
 {
     public function getAllTableName()
     {
-        $data = ['Booking','Country'];
+        $data = ['Booking','Country','Users','DescriptionCountry','ImageCountry','Tags'];
         return response()->json(['status' => true, 'data' => $data],200);
     }
 }

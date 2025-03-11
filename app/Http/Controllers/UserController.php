@@ -4,18 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class UserController extends Controller
 {
-    public function all()
+    public function getColumn()
     {
-        try {
-            $users = User::all();
-            return response()->json($users);
-        } catch (\Exception $e) {
-            return response()->json([
-                "message" => $e->getMessage()
-            ], $e->getCode() ?: 500);
-        }
+        return Schema::getColumnListing((new User())->getTable());
+    }
+    public function data()
+    {
+        return User::all();
+    }
+    public function deleteById($id)
+    {
+        return User::destroy($id);
+    }
+    public function updateById(Request $request, $id)
+    {
+        $user = User::find($id);
+        $user->update($request->all());
+        return $user;
     }
 }
