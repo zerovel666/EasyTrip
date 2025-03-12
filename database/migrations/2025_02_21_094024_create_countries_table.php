@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('trip_name');
             $table->string('city_name');
             $table->float('price_per_day');
-            $table->integer('count_place');
             $table->string('image_path');
             $table->string('currency')->default('KZT');
             $table->boolean('active')->default(false);

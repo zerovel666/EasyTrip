@@ -119,14 +119,14 @@ class CountryController extends Controller
         }
     }
 
-    public function countByname(Request $request)
+    public function countByname()
     {
         try {
             return Country::select('country_name')->distinct()->get()->map(function ($country) {
                 $countries = Country::where('country_name', $country['country_name']);
                 $countTrip = $countries->count();
 
-                $countryImage = ImageCountry::whereIn('country_id', $countries->pluck('id'))->first()->image_path;
+                $countryImage = ImageCountry::where('country_name',$country['country_name'])->first()->image_path;
 
                 return [
                     "country_name" => $country['country_name'],
@@ -183,7 +183,6 @@ class CountryController extends Controller
             'country' => Schema::getColumnListing((new Country)->getTable()),
             'tags' => Schema::getColumnListing((new Tags)->getTable()),
             'description_country' => Schema::getColumnListing((new DescriptionCountry)->getTable()),
-            'image_country' => Schema::getColumnListing((new ImageCountry)->getTable()),
         ]);
     }
 
@@ -193,7 +192,6 @@ class CountryController extends Controller
             $validate = $request->validate([
                 'country.country_name' => 'required',
                 'country.trip_name' => 'required',
-                'country.active' => 'required',
                 'description_country.description' => 'required',
                 'description_country.rating' => 'required',
                 'tags.tag' => 'required',
@@ -216,12 +214,6 @@ class CountryController extends Controller
                 $dataTags['country_id'] = $country->id;
                 Tags::create($dataTags);
 
-                $dataImageCountry = $request->image_country;
-                $dataImageCountry['country_id'] = $country->id;
-                $fileImageCountry = Storage::disk('public')->put('countryImage', $request->file('image_path_country'));
-                $dataImageCountry['image_path'] = $fileImageCountry;
-                unset($dataImageCountry['image_path_name']);
-                ImageCountry::create($dataImageCountry);
             });
             return response()->json([
                 'message' => 'Success create'

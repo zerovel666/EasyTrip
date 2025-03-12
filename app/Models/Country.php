@@ -15,7 +15,6 @@ class Country extends Model
         'trip_name',
         'city_name',
         'price_per_day',
-        'count_place',
         'image_path',
         'currency',
     ];
@@ -29,11 +28,6 @@ class Country extends Model
     public function tags():HasMany
     {
         return $this->hasMany(Tags::class,'country_id','id');
-    }
-
-    public function imageCountries():HasOne
-    {
-        return $this->hasOne(ImageCountry::class,'country_id','id');
     }
 
     public function bookings() :HasMany

@@ -10,14 +10,10 @@ class ImageCountry extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'country_id',
+        'country_name',
         'image_path'
     ];
 
     protected $table = 'image_countries';
 
-    public function countries() :BelongsTo
-    {
-        return $this->belongsTo(Country::class,'id','country_id');
-    }
 }

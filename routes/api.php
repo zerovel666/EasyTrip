@@ -75,6 +75,8 @@ Route::prefix('admin')->middleware(RoleMiddleware::class.':admin')->group(functi
         Route::get('/data',[ImageCountryController::class, 'data']);
         Route::delete('/{id}',[ImageCountryController::class, 'deleteById']);
         Route::post('update/{id}',[ImageCountryController::class, 'updateBy']);
+        Route::get('/download', [ImageCountryController::class,'downloadTableColumnOrThisRelation']);
+        Route::post('/create',[ImageCountryController::class, 'createForAdmin']);
     });
     Route::prefix('tags')->group(function (){
         Route::get('/column',[TagsController::class,'getColumn']);

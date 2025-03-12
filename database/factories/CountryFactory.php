@@ -19,7 +19,6 @@ class CountryFactory extends Factory
             'trip_name' => 'Тур в ' . $city,
             'city_name' => $city,
             'price_per_day' => $this->faker->numberBetween(10000,30000),
-            'count_place' => $this->faker->numberBetween(1, 50),
             'image_path' => $this->faker->image,
             'currency' => 'KZT',
             'created_at' => $this->faker->date,

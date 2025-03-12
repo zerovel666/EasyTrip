@@ -39,4 +39,28 @@ class ImageCountryController extends Controller
             ], $e->getCode() ?? 500);
         }
     }
+    public function createForAdmin(Request $request)
+    {
+        try{
+            $file = $request->file('image_path');
+            $filePath = Storage::disk('public')->put('countryImage',$file);
+            $data = $request->all();
+            $data['image_path'] = $filePath;
+            ImageCountry::create($data);
+            return response()->json([
+                'message' => 'Succefully created'
+            ],200);
+        } catch(\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ],$e->getCode() ?? 500);
+        }
+    }
+
+    public function downloadTableColumnOrThisRelation()
+    {
+        return response()->json([
+            'imageCountry' => Schema::getColumnListing((new ImageCountry)->getTable()),
+        ]);
+    }
 }
