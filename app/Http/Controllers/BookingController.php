@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Country;
+use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,6 @@ class BookingController extends Controller
                 'trip_name' => 'required',
                 'check_in' => 'required|date',
                 'check_out' => 'required|date',
-                'occupied_place' => 'required|integer',
                 'users_iins' => 'required|array',
             ]);
             if (!$validate) {
@@ -28,10 +28,6 @@ class BookingController extends Controller
             }
             DB::transaction(function () use ($request) {
                 $country = Country::where('trip_name', $request->trip_name)->firstOrFail();
-
-                if ($country->occupied + $request->occupied_place > $country->count_place) {
-                    throw new \Exception("Недостаточно свободных мест", 400);
-                }
 
                 $overlappingBookings = Booking::where('country_id', $country->id)
                     ->where('active', true)
@@ -56,8 +52,7 @@ class BookingController extends Controller
                     'check_out'      => $request->check_out,
                     'active'         => true,
                     'uuid'           => Str::uuid(),
-                    'users_iins'          => json_encode($request->users_iins),
-                    'occupied_place' => $request->occupied_place
+                    'users_iins'          => json_encode($request->users_iins)
                 ]);
 
                 return response()->json([
@@ -131,5 +126,20 @@ class BookingController extends Controller
         return response()->json([
             'booking' => Schema::getColumnListing((new Booking)->getTable()),
         ]);
+    }
+
+    public function getByUserId(Request $request,$userid)
+    {
+        $bookings = Booking::where('user_id', $userid)->get();
+        $collection = collect($bookings)->map(function ($booking) use($userid){
+            $country_id = $booking->country_id;
+            $amount = Payment::where('user_id',$userid)->where('country_id',$country_id)->first();
+            $booking['tripInfo'] = Country::find($country_id);
+            $booking['tripInfo']['image_path'] = 'http://localhost:8000'.Storage::url($booking['tripInfo']['image_path']);
+            $booking['users_iins'] = json_decode($booking['users_iins']);
+            $booking['amount'] = $amount['amount'];
+            return $booking;
+        });
+        return $collection;
     }
 }

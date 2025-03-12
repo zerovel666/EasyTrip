@@ -15,7 +15,6 @@ class Booking extends Model
         'active',
         'uuid',
         'users_iins',
-        'occupied_place',
     ];
 
     protected $table = 'bookings';

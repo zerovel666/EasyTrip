@@ -19,8 +19,7 @@ return new class extends Migration
             $table->date('check_out');
             $table->boolean('active');
             $table->uuid('uuid');
-            $table->json('users_iins');
-            $table->integer('occupied_place');
+            $table->text('users_iins');
             $table->timestamps();
         });
         

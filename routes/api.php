@@ -20,6 +20,9 @@ Route::put('/password/reset', [AuthController::class, 'resetPassword'])->name('p
 
 Route::middleware(RoleMiddleware::class.':standart')->group(function (){
     Route::post('/country/like', [LikeCountryController::class,'like']);
+    Route::get('/userInfo/{id}',[UserController::class, 'getUser']);
+    Route::get('/userBooking/{id}',[BookingController::class, 'getByUserId']);
+    Route::put('/userInfo/{id}',[UserController::class, 'updateById']);
 });
 
 Route::get('/country/best',[CountryController::class,'getBests']);

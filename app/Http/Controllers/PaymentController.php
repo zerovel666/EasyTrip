@@ -15,6 +15,7 @@ class PaymentController extends Controller
     {
         try {
             DB::transaction(function () use ($request) {
+                $country_id = Country::whereTripName($request->card['trip_name'])->get()[0]['id'];
                 $cardPay = [
                     'num_pay' => Str::uuid(),
                     'user_id' => $request->header('userid'),
@@ -25,9 +26,9 @@ class PaymentController extends Controller
                     'num_card' => $request->card['num_card'],
                     'fn_mn_card' => $request->card['fn_mn_card'],
                     'trip_name' => $request->card['trip_name'],
-                    'amount' => $request->card['amount']
+                    'amount' => $request->card['amount'],
+                    'country_id' => $country_id
                 ];
-                $country_id = Country::whereTripName($request->card['trip_name'])->get()[0]['id'];
                 $data = [
                     'country_id'     => $country_id,
                     'user_id'        => $request->header('userid'),
@@ -35,10 +36,8 @@ class PaymentController extends Controller
                     'check_out'      => $request->data['check_out'],
                     'active'         => true,
                     'uuid'           => Str::uuid(),
-                    'users_iins'          => json_encode($request->users_iins),
-                    'occupied_place' => $request->data['occupied_place']
+                    'users_iins' => json_encode($request->data['users_iins'])
                 ];
-
                 Payment::create($cardPay);
                 Booking::create($data); 
             });

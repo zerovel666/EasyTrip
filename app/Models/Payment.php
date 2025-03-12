@@ -12,6 +12,7 @@ class Payment extends Model
         'user_id',
         'phone',
         'email',
+        'country_id',
         'full_name',
         'type',
         'num_card',

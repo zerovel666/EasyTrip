@@ -16,7 +16,6 @@ class Country extends Model
         'city_name',
         'price_per_day',
         'count_place',
-        'occupied',
         'image_path',
         'currency',
     ];

@@ -38,4 +38,15 @@ class UserController extends Controller
             ], $e->getCode() ?? 500);
         }
     }
+    public function getUser($id)
+    {
+        try {
+            return User::find($id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);
+        }
+    }
+    
 }
