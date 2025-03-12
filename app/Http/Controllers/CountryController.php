@@ -7,7 +7,6 @@ use App\Models\DescriptionCountry;
 use App\Models\ImageCountry;
 use App\Models\Tags;
 use App\Models\User;
-use Illuminate\Container\Attributes\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -57,7 +56,7 @@ class CountryController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
-            ], $e->getCode());
+            ], $e->getCode() ?? 500);;
         }
     }
     //    UPDATE countries SET image_path = 'countryImage/5T0ctVNboOwPr11zLUr4LofqOd1xfCdTS4yXCtmz.jpg';
@@ -70,7 +69,7 @@ class CountryController extends Controller
             $user = $request->header('userid');
             $user = User::find($user);
             if (isset($user['role'])  && $user['role'] == 'admin') {
-                $countries = Country::orderBy('id','asc')->get()->map(function ($country) {
+                $countries = Country::orderBy('id', 'asc')->get()->map(function ($country) {
                     $country['image_path'] = "http://localhost:8000" . Storage::url($country['image_path']);
                     $country->descriptionCountry;
                     $country->tags;
@@ -79,7 +78,7 @@ class CountryController extends Controller
 
                 return $countries;
             } else {
-                $countries = Country::where('active', true)->orderBy('id','asc')->get()->map(function ($country) {
+                $countries = Country::where('active', true)->orderBy('id', 'asc')->get()->map(function ($country) {
                     $country['image_path'] = "http://localhost:8000" . Storage::url($country['image_path']);
                     $country->descriptionCountry;
                     $country->tags;
@@ -90,7 +89,7 @@ class CountryController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
-            ], $e->getCode());
+            ], $e->getCode() ?? 500);;
         }
     }
 
@@ -105,7 +104,7 @@ class CountryController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
-            ], $e->getCode());
+            ], $e->getCode() ?? 500);;
         }
     }
 
@@ -116,7 +115,7 @@ class CountryController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
-            ], $e->getCode());
+            ], $e->getCode() ?? 500);;
         }
     }
 
@@ -138,7 +137,7 @@ class CountryController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
-            ], $e->getCode());
+            ], $e->getCode() ?? 500);;
         }
     }
 
@@ -149,25 +148,34 @@ class CountryController extends Controller
 
     public function data()
     {
-        return Country::orderBy('id','asc')->get();
+        return Country::orderBy('id', 'asc')->get();
     }
 
     public function deleteById($id)
     {
-        return response()->json([
-            'status' => Country::where('id', $id)->delete(),
-            'message' => "Success delete"
-        ],200);
+        try {
+            return Country::destroy($id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);;
+        }
     }
     public function updateById(Request $request, $id)
     {
-        $data = $request->all();
-        $image = $request->file('image_path');
-        if($image){
-            $saveFile = Storage::disk('public')->put('countryImage', $image);
-            $data['image_path'] = $saveFile;
+        try {
+            $data = $request->all();
+            $image = $request->file('image_path');
+            if ($image) {
+                $saveFile = Storage::disk('public')->put('countryImage', $image);
+                $data['image_path'] = $saveFile;
+            }
+            return Country::where('id', $id)->update($data);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);;
         }
-        return Country::where('id', $id)->update($data);
     }
     public function downloadTableColumnOrThisRelation()
     {
@@ -178,24 +186,36 @@ class CountryController extends Controller
             'image_country' => Schema::getColumnListing((new ImageCountry)->getTable()),
         ]);
     }
-    
+
     public function createAdmin(Request $request)
     {
+        try {
+            $validate = $request->validate([
+                'country.country_name' => 'required',
+                'country.trip_name' => 'required',
+                'country.active' => 'required',
+                'description_country.description' => 'required',
+                'description_country.rating' => 'required',
+                'tags.tag' => 'required',
+            ]);
+            if (!$validate) {
+                throw new \Exception('Validation failed', 400);
+            }
             DB::transaction(function () use ($request) {
                 $dataCountry = $request->country;
                 unset($dataCountry['image_path_name']);
                 $fileCountry = Storage::disk('public')->put('countryImage', $request->file('image_path'));
                 $dataCountry['image_path'] = $fileCountry;
                 $country = Country::create($dataCountry);
-        
+
                 $dataDescriptionCountry = $request->description_country;
                 $dataDescriptionCountry['country_id'] = $country->id;
                 DescriptionCountry::create($dataDescriptionCountry);
-        
+
                 $dataTags = $request->tags;
                 $dataTags['country_id'] = $country->id;
                 Tags::create($dataTags);
-        
+
                 $dataImageCountry = $request->image_country;
                 $dataImageCountry['country_id'] = $country->id;
                 $fileImageCountry = Storage::disk('public')->put('countryImage', $request->file('image_path_country'));
@@ -206,7 +226,10 @@ class CountryController extends Controller
             return response()->json([
                 'message' => 'Success create'
             ]);
-
-    }    
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);
+        }
+    }
 }
-    

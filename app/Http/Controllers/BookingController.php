@@ -69,7 +69,7 @@ class BookingController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage(),
-            ], $e->getCode());
+            ], $e->getCode() ?? 500);;
         }
     }
 
@@ -109,7 +109,7 @@ class BookingController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage(),
-            ], $e->getCode());
+            ], $e->getCode() ?? 500);;
         }
     }
     public function deleteById($id)
@@ -123,7 +123,7 @@ class BookingController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => $e->getMessage(),
-            ], $e->getCode());
+            ], $e->getCode() ?? 500);;
         }
     }
     public function downloadTableColumnOrThisRelation()

@@ -18,13 +18,25 @@ class TagsController extends Controller
     }
     public function deleteById($id)
     {
-        return Tags::destroy($id);
+        try {
+            return Tags::destroy($id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);;
+        }
     }
     public function updateBy(Request $request, $id)
     {
-        $description = Tags::find($id);
-        $description->update($request->all());
-        return $description;
+        try {
+            $description = Tags::find($id);
+            $description->update($request->all());
+            return $description;
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);;
+        }
     }
     public function downloadTableColumnOrThisRelation()
     {
@@ -34,6 +46,19 @@ class TagsController extends Controller
     }
     public function create(Request $request)
     {
-        return Tags::create($request->all());
+        try {
+            $validate = $request->validate([
+                'tag' => 'required',
+                'country_id' => 'required'
+            ]);
+            if (!$validate) {
+                throw new \Exception('Validation failed', 400);
+            }
+            return Tags::create($request->all());
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);;
+        }
     }
 }

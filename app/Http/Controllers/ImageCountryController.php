@@ -19,13 +19,24 @@ class ImageCountryController extends Controller
     }
     public function deleteById($id)
     {
-        return ImageCountry::destroy($id);
+        try {
+            return ImageCountry::destroy($id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);
+        }
     }
     public function updateBy(Request $request, $id)
     {
-        $description = ImageCountry::find($id);
-        $file = Storage::disk('public')->put('countryImage', $request->file('image_path'));
-        $description->update(['image_path' => $file]);
-        return $description;
+        try {
+            $image = ImageCountry::find($id);
+            $image->update($request->all());
+            return $image;
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);
+        }
     }
 }

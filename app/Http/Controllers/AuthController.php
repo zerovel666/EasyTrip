@@ -66,12 +66,12 @@ class AuthController extends Controller
                     'role' => $user->role
                 ]);
             } else {
-                throw new \Exception("Bad password",400);
+                throw new \Exception("Bad password", 400);
             }
         } catch (\Exception $e) {
             return response()->json([
                 "message" => $e->getMessage()
-            ], $e->getCode());
+            ], $e->getCode() ?? 500);;
         }
     }
 

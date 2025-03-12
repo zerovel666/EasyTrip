@@ -18,12 +18,24 @@ class UserController extends Controller
     }
     public function deleteById($id)
     {
-        return User::destroy($id);
+        try {
+            return User::destroy($id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);
+        }
     }
     public function updateById(Request $request, $id)
     {
-        $user = User::find($id);
-        $user->update($request->all());
-        return $user;
+        try {
+            $user = User::find($id);
+            $user->update($request->all());
+            return $user;
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], $e->getCode() ?? 500);
+        }
     }
 }
