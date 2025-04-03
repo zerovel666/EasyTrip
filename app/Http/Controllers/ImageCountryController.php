@@ -31,7 +31,11 @@ class ImageCountryController extends Controller
     {
         try {
             $image = ImageCountry::find($id);
-            $image->update($request->all());
+            $file = $request->file('image_path');
+            $filePath = Storage::disk('public')->put('countryImage',$file);
+            $data = $request->all();
+            $data['image_path'] = $filePath;
+            $image->update($data);
             return $image;
         } catch (\Exception $e) {
             return response()->json([
